@@ -4,7 +4,6 @@ $username = $argv[1];
 $password = $argv[2];
 
 
-
 $db = new mysqli('localhost','root','rootpassword','LunchManagement');
 if ($db->connect_errno > 0)
 {
@@ -17,14 +16,17 @@ $result = $db->query($query);
 
 $query2="select roletype from user u inner join role r on u.roleid = r.roleid where uname = '$username' lmit 1;";
 
-$query3= "select scheduledate, restaurantname from restaurantschedule rs
-		   inner join restaurant r on rs.restaurantid = r.restaurantid
-	           where scheduledate > curdate() 
-		   order by scheduledate  ;";
+$query3= "select restaurantname rn,  
+		restaurantaddress1 ra1,
+		restaurantcity rc,
+		restaurantstate rs,
+		restaurantzip rz,
+		restaurantphone rp,
+		restaurantemail re,
+		restaurantcontactperson rcp
+		From restaurant ;";
 
 $result3 = $db->query($query3);
-$response =  array();
-
 
 do 
 {
@@ -41,17 +43,24 @@ if ($result->num_rows!=0)
 
 
 		    if ($result3->num_rows > 0) {
-		    echo "Hi " . $username . ". Here's the schedule for the rest of the week:".PHP_EOL; 
-
+		    echo "List of Resturants with their details...".PHP_EOL;
 		    echo "\n";
 		    // output data of each row
 		    while($row = $result3->fetch_assoc()) {
-			echo "\n Date:".$row["scheduledate"]."\n Restaurant:".$row["restaurantname"]."\n";
+		    echo "\nRestaurant Name:".$row["rn"]."\nRestaurant Address:".$row["ra1"]."\nRestaurant City:".$row["rc"]."\nRestaurant State:".$row["rs"]."\nRestaurant Zip:".$row["rz"]."\nRestaurant Phone:".$row["rp"]."\nRestaurant Email:".$row["re"]."\nRestaurant Contact Person:".$row["rcp"]."\n";
+		    echo "\n";
 		    }
 		    echo "\n";
 		    } else {
-		    echo "0 results";
-		   }
+		    echo "0 results. May be one of the paramters enterered have incorrect values.\n Try entering values as ./phpfilename.php username password 'inputdate' ";
+		    }
+
+
+echo "\n";
+echo "\n--------------------------------------------------END OF RECORDS-----------------------------------------------------------------------\n".PHP_EOL;
+echo "\n---------------------------------------------------------------------------------------------------------------------------------------\n".PHP_EOL;
+echo "\n";
+
 
 
 	}

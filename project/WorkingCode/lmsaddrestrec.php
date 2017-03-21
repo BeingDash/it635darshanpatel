@@ -48,7 +48,32 @@ if ($result->num_rows!=0)
 		    echo "OOPSS.".PHP_EOL;
 		    echo "Error: " . $query3 . "\n" . $db->error;
 	            echo "\n";
-		}		
+		}	
+
+$query4="select empname, recomendation from restaurantrecomendation rr
+inner join user u on rr.uid = u.uid
+inner join employees e on e.empid = u.empid 
+order by recomendation_timestamp desc";
+$result4 = $db->query($query4);
+
+
+echo "\n";
+echo "\n---------------------------------------------------------------------------------------------------------------------------------------\n".PHP_EOL;
+echo "\n---------------------------------------------------------------------------------------------------------------------------------------\n".PHP_EOL;
+echo "\n";
+
+
+		    if ($result4->num_rows > 0) {
+       	            echo "List of Restaurant Recomended... " .PHP_EOL;
+
+		    echo "\n";
+		    // output data of each row
+		    while($row = $result4->fetch_assoc()) {
+       		    echo "\nEmployee Name:".$row["empname"]."\nRecomendation:".$row["recomendation"]."\n";
+		    echo "\n";
+		    }
+		    echo "\n";
+		    }	
 
 
 	}
