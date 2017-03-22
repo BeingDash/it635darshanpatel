@@ -1,0 +1,107 @@
+Step 1. Create Database and Insert all the items if required. 
+
+lms_create_database.php - need to change the name to LunchManagement
+
+Paramters 3 - localhost root rootpassword
+
+If possible use the one thats on the Linux Server right now. it has a lot more test data and would be fun to play around with. 
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+Step 2. Check Login - this is just a check and no real significance. 
+It shows whose admin and who is not. 
+
+lms_login.php --auth -u root -p rootpassword
+
+other userid lmslogin.php --auth -u john -p ihatepwd 
+
+this use login.inc as well. The concept I used is similar to what DJ.Kehoe showed in class.
+ 
+---------------------------------------------------------------------------------------------------------------------------------
+
+Step 3. Add Lunch Order
+
+
+lms_add_lunch_order.php root password 'place order'
+
+if an order has already been placed for a day it wont allow to enter and it will pass a message saying the ordered cant be edited for now. 
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+Step 4. Add Restaurant Recommendation
+
+lms_add_rest_rec.php root password 'Test Restaurant Rt 21 near Newark - it has great food'
+
+An user can add many recommendations. 
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+Step 5. Add Restaurant Review
+
+lms_add_review.php root rootpassword 'review' 'restaurant' 'rating'
+
+review cant be null or empty
+restaurant can be searched by key word (like clause in mysql)
+rating has to be between 0 to 5
+it will display aggreate rating and review once the review has been placed.
+review can only be placed if the order has been place from a restaurant in last one week. 
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+Step 6. Add New Restaurants
+
+lms_admin_add_new_restaurant.php root rootpassword restaurantname restaurnataddress1 restaurantphone
+
+there are many other fields in database but i only added 3 parameters for now. 
+Only admin can add new restaurants.
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+Step 7. Check Lunch Orders
+
+lms_admin_all_lunch_orders.php root rootpassword
+
+Only admin can check this list
+it is a detailed list.
+
+it displays the restaurant ordering from today and its average ratings and reviews. 
+it displays the ordered placed for the day so far.
+it displays who hasn't placed the ordered today.
+it displays who is out of th office today.
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+Step 8. Check New Schedule
+
+lms_check_new_schedule.php root rootpassword
+
+this will display the restaurant schedule for the remainder of the week.
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+Step 9. Check Past Schedule
+
+lms_check_past_schedule.php root rootpassword '20170228' 
+
+the last parameter is cut off date or input date in case user wants to see what was the schedule for last few days. 
+
+this report will also display the number of times a particular restaurant has been used. 
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+Step 10. Check Restaurant List
+
+lms_restaurant_list.php root rootpassword
+
+This will display all the restaurant we are currently ordering from, 
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+Step 10. User Lunch Order List
+
+
+lms_user_lunch_orders.php root rootpassword 'restaurantname'
+
+individual order can check what he or she ordered in the past from a particular restaurant or all the restaurants. 
+
