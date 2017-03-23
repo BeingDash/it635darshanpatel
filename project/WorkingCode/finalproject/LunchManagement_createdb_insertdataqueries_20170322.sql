@@ -1,187 +1,3 @@
-#!/usr/bin/php
-
- <?php
-$servername = $argv[1];
-$username = $argv[2];
-$password = $argv[3];
-
-
-// Creating Connection
-$db = new mysqli($servername,$username,$password);
-if ($db->connect_error) {
-    die("Either the username and password is incorrect or you do not have privileges Connection failed: " . $db->connect_error);
-}
-
-
-// Creating database
-$query = "DROP DATABASE IF EXISTS LunchManagement;
-
-CREATE DATABASE lmstest;
-
-USE lmstest;
-
-DROP TABLE IF EXISTS `employees`;
-CREATE TABLE `employees` (
-  `empid` int(11) NOT NULL AUTO_INCREMENT,
-  `empname` varchar(50) NOT NULL,
-  `empaddress1` varchar(50) DEFAULT NULL,
-  `empaddress2` varchar(50) DEFAULT NULL,
-  `empcity` varchar(50) DEFAULT NULL,
-  `empstate` varchar(10) DEFAULT NULL,
-  `empzip` varchar(10) DEFAULT NULL,
-  `empphone` varchar(25) DEFAULT NULL,
-  `empemail` varchar(100) DEFAULT NULL,
-  `empcomment` varchar(500) DEFAULT NULL,
-  PRIMARY KEY (`empid`)
-);
-
-DROP TABLE IF EXISTS `restaurant`;
-CREATE TABLE `restaurant` (
-  `restaurantid` int(11) NOT NULL AUTO_INCREMENT,
-  `restaurantname` varchar(50) NOT NULL,
-  `restaurantaddress1` varchar(50) DEFAULT NULL,
-  `restaurantaddress2` varchar(50) DEFAULT NULL,
-  `restaurantcity` varchar(50) DEFAULT NULL,
-  `restaurantstate` varchar(10) DEFAULT NULL,
-  `restaurantzip` varchar(10) DEFAULT NULL,
-  `restaurantphone` varchar(25) DEFAULT NULL,
-  `restaurantfax` varchar(25) DEFAULT NULL,
-  `restaurantemail` varchar(100) DEFAULT NULL,
-  `restaurantcontactperson` varchar(100) DEFAULT NULL,
-  `restaurantcomment` varchar(500) DEFAULT NULL,
-  `delivery` varchar(10) DEFAULT NULL,
-  PRIMARY KEY (`restaurantid`)
-); 
-
-
-DROP TABLE IF EXISTS `role`;
-CREATE TABLE `role` (
-  `roleid` int(11) NOT NULL AUTO_INCREMENT,
-  `roletype` varchar(50) NOT NULL,
-  PRIMARY KEY (`roleid`)
-);
-
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
-  `uid` int(11) NOT NULL AUTO_INCREMENT,
-  `uname` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL,
-  `empid` int(11) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `create_timestamp` datetime DEFAULT CURRENT_TIMESTAMP,
-  `roleid` int(11) NOT NULL,
-  PRIMARY KEY (`uid`),
-  KEY `fk_user_1_idx` (`roleid`),
-  CONSTRAINT `fk_user_1` FOREIGN KEY (`roleid`) REFERENCES `role` (`roleid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-DROP TABLE IF EXISTS `lunchinvoice`;
-CREATE TABLE `lunchinvoice` (
-  `lunchinvoiceid` int(11) NOT NULL AUTO_INCREMENT,
-  `lunchinvoicedate` datetime DEFAULT NULL,
-  `amount` decimal(10,2) DEFAULT NULL,
-  `discount` decimal(10,2) DEFAULT '0.00',
-  `tax` decimal(10,2) DEFAULT NULL,
-  `tip` decimal(10,2) DEFAULT '0.00',
-  `subtotal` decimal(10,2) GENERATED ALWAYS AS ((((`amount` - `discount`) + `tax`) + `tip`)) VIRTUAL,
-  `restaurantid` int(11) NOT NULL,
-  PRIMARY KEY (`lunchinvoiceid`),
-  KEY `fk_lunchinvoice_1_idx` (`restaurantid`),
-  CONSTRAINT `fk_lunchinvoice_1` FOREIGN KEY (`restaurantid`) REFERENCES `restaurant` (`restaurantid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-DROP TABLE IF EXISTS `lunchorder`;
-CREATE TABLE `lunchorder` (
-  `lunchorderid` int(11) NOT NULL AUTO_INCREMENT,
-  `orderitem` varchar(500) NOT NULL,
-  `uid` int(11) NOT NULL,
-  `lunchordercomment` varchar(500) DEFAULT NULL,
-  `restaurantid` int(11) NOT NULL,
-  `orderdate` varchar(10) NOT NULL,
-  PRIMARY KEY (`lunchorderid`),
-  KEY `fk_lunchorder_1_idx` (`uid`),
-  KEY `fk_lunchorder_2_idx` (`restaurantid`),
-  CONSTRAINT `fk_lunchorder_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_lunchorder_2` FOREIGN KEY (`restaurantid`) REFERENCES `restaurant` (`restaurantid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-); 
-
-
-DROP TABLE IF EXISTS `menuitem`;
-CREATE TABLE `menuitem` (
-  `itemid` int(11) NOT NULL AUTO_INCREMENT,
-  `menuitemid` varchar(50) NOT NULL,
-  `itemname` varchar(50) NOT NULL,
-  `price` varchar(50) DEFAULT NULL,
-  `specials` varchar(50) DEFAULT NULL,
-  `itemcomment` varchar(500) DEFAULT NULL,
-  `restaurantid` int(11) NOT NULL,
-  PRIMARY KEY (`itemid`),
-  KEY `fk_menuitem_1_idx` (`restaurantid`),
-  CONSTRAINT `fk_menuitem_1` FOREIGN KEY (`restaurantid`) REFERENCES `restaurant` (`restaurantid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-); 
-
-
-
-DROP TABLE IF EXISTS `restaurantrecomendation`;
-CREATE TABLE `restaurantrecomendation` (
-  `recomendationid` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
-  `recomendation` varchar(500) DEFAULT NULL,
-  `recomendation_timestamp` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`recomendationid`),
-  KEY `fk_restaurantrecomendation_1_idx` (`uid`),
-  CONSTRAINT `fk_restaurantrecomendation_1` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-); 
-
-
-DROP TABLE IF EXISTS `ratingmaster`;
-CREATE TABLE `ratingmaster` (
-  `rating` INT NOT NULL AUTO_INCREMENT,
-  `ratingdescription` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`rating`));
-
-DROP TABLE IF EXISTS `restaurantreview`;
-CREATE TABLE `restaurantreview` (
-  `reviewid` int(11) NOT NULL AUTO_INCREMENT,
-  `restaurantid` int(11) NOT NULL,
-  `uid` int(11) NOT NULL,
-  `review` varchar(500) NOT NULL,
-  `rating` int(1) NOT NULL,
-  `review_timestamp` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`reviewid`),
-  KEY `fk_restaurantreview_1_idx` (`restaurantid`),
-  KEY `fk_restaurantreview_2_idx` (`uid`),
-  KEY `fk_restaurantreview_3_idx` (`rating`),
-  CONSTRAINT `fk_restaurantreview_1` FOREIGN KEY (`restaurantid`) REFERENCES `restaurant` (`restaurantid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_restaurantreview_2` FOREIGN KEY (`uid`) REFERENCES `user` (`uid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_restaurantreview_3` FOREIGN KEY (`rating`) REFERENCES `ratingmaster` (`rating`) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-DROP TABLE IF EXISTS `restaurantschedule`;
-CREATE TABLE `restaurantschedule` (
-  `scheduleid` int(11) NOT NULL AUTO_INCREMENT,
-  `restaurantid` int(11) NOT NULL,
-  `scheduledate` varchar(10) NOT NULL,
-  PRIMARY KEY (`scheduleid`),
-  KEY `fk_restaurantschedule_1_idx` (`restaurantid`),
-  CONSTRAINT `fk_restaurantschedule_1` FOREIGN KEY (`restaurantid`) REFERENCES `restaurant` (`restaurantid`) ON DELETE NO ACTION ON UPDATE NO ACTION
-);
-
-DROP TABLE IF EXISTS `empdayoff`;
-CREATE TABLE `empdayoff` (
-  `dayoffid` INT NOT NULL AUTO_INCREMENT,
-  `empid` INT NOT NULL,
-  `dayoffdate` VARCHAR(10) NOT NULL,
-  `reason` VARCHAR(500) NULL,
-  PRIMARY KEY (`dayoffid`),
-  INDEX `fk_empdayoff_1_idx` (`empid` ASC),
-  CONSTRAINT `fk_empdayoff_1`
-    FOREIGN KEY (`empid`)
-    REFERENCES `employees` (`empid`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION);
-
-
 insert into employees (empname, empaddress1,empaddress2,empcity,empstate,empzip,empphone,empemail,empcomment) values ('Darshan Patel','1 Main St','','Passaic','NJ','07055','9731112222','darshan@gmail.com','work and study');
 
 insert into employees (empname, empaddress1,empaddress2,empcity,empstate,empzip,empphone,empemail,empcomment) values ('John Smith','11 Blaine St','Fl 3','Clifton','NJ','07013','9732112322','js1234@gmail.com','');
@@ -243,6 +59,133 @@ values
 insert into restaurant (restaurantname,restaurantaddress1,restaurantaddress2,restaurantcity,restaurantstate,restaurantzip,restaurantphone,restaurantfax,restaurantemail,restaurantcontactperson,restaurantcomment,delivery)
 values
 ('kosher experience','31 vermont st','','lodi','nj','07011','2018089232','','ke23@gmail.com','Lior Hod - Owner','','Y');
+
+
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (1,'chalupa','3.50','','',1);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (2,'qusedilla','4.50','','',1);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (3,'burrito','4.00','','',1);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (4,'nachos','2.50','','',1);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (5,'chicken and rice','5.50','','',1);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (6,'crispy taco','4.00','','',1);
+
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (1,'garden omlet','7.50','','',2);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (2,'blackened salmon','12.50','','',2);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (3,'tick tock special','15.50','','',2);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (4,'volcano eggfry','6.50','','',2);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (5,'brazilian egg mushroom fry','7.50','','',2);
+
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (1,'rava dosa','8.50','','',3);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (2,'udupi tava masala dosa','9.50','','',3);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (3,'double cheese masala dosa','8.50','','',3);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (4,'onion masala dosa','7.50','','',3);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (1,'dry manchurian','10.50','','',4);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (2,'hakka noodles','11.50','','',4);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (3,'chinese salmon fry','14.50','','',4);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (4,'bollywood special bacon crispynoodles','14.50','','',4);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (5,'yunkung chicken','7.50','','',4);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (1,'romeos special pizza','11.50','','',5);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (2,'mozerella sticks','3.50','','',5);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (3,'grilled sandwich','7.50','','',5);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (4,'chocolate crisp bread','8.50','','',5);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (1,'paneer tikka masala','9.50','','',6);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (2,'chicken curry','7.50','','',6);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (3,'roasted bacon curry','11.50','','',6);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (1,'chocolate chipcookie','1.50','','',7);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (2,'strawberry colata','3.50','','',7);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (3,'sub special sandwich','7.50','','',7);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (4,'french fries','4.50','','',7);
+
+insert into menuitem (menuitemid,itemname,8rice,specials,itemcomment,restaurantid)
+values (1,'avacado over rice','6.50','','',8);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (2,'brown bread','3.50','','',8);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (3,'garden salad','7.50','','pick the item',8);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (1,'mexican soft tacos','5.50','','',9);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (2,'roasted chicken salad','7.50','','',9);
+
+insert into menuitem (menuitemid,itemname,8rice,specials,itemcomment,restaurantid)
+values (3,'viggie bowl','7.50','','choose and pick up',9);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (4,'garden chicken bowl','11.50','','',9);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (1,'kosher falafel','7.50','','pick upto 4 falafel balls',10);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (2,'kosher salmon over rice','14.50','','',10);
+
+insert into menuitem (menuitemid,itemname,price,specials,itemcomment,restaurantid)
+values (3,'kosher veggie special','10.50','','pick up the vegetables',10);
 
 
 
@@ -362,7 +305,6 @@ insert into restaurantschedule (restaurantid,scheduledate)
 values (2,20170303);
 
 
-
 insert into restaurantschedule (restaurantid,scheduledate)
 values (9,20170316);
 
@@ -385,6 +327,7 @@ values (10,20170323);
 
 insert into restaurantschedule (restaurantid,scheduledate)
 values (2,20170324);
+
 
 
 
@@ -608,8 +551,6 @@ Insert into lunchorder (orderitem,uid,restaurantid,orderdate)
 values ('italian salad with beef',10,2,20170303);
 
 
-
-
 insert into lunchinvoice (lunchinvoicedate,amount,discount,tip,restaurantid)
 values ('20170220',100,0,13,1);
 insert into lunchinvoice (lunchinvoicedate,amount,discount,tip,restaurantid)
@@ -630,6 +571,32 @@ insert into lunchinvoice (lunchinvoicedate,amount,discount,tip,restaurantid)
 values ('20170302',102,0,13,10);
 insert into lunchinvoice (lunchinvoicedate,amount,discount,tip,restaurantid)
 values ('20170303',105,5,14,2);
+
+INSERT INTO `ratingmaster` (`ratingdescription`) VALUES ('horrible');
+INSERT INTO `ratingmaster` (`ratingdescription`) VALUES ('bad');
+INSERT INTO `ratingmaster` (`ratingdescription`) VALUES ('average');
+INSERT INTO `ratingmaster` (`ratingdescription`) VALUES ('good');
+INSERT INTO `ratingmaster` (`ratingdescription`) VALUES ('excellent');
+
+
+
+insert restaurantreview (restaurantid,uid,review,rating)
+values (1,1,'Taco Bell has the best food ever. I love the fire sauce.',4)
+,(2,3,'Can we not do this place all the time?',3)
+,(1,8,'Taco Bell for President',5)
+,(7,7,'I do not like this place. Their subs are always soggy.',2)
+,(5,5,'I would rather starve.',1);
+
+
+INSERT INTO `empdayoff` (`empid`, `dayoffdate`, `reason`) VALUES ('3', '20170224', 'sick');
+INSERT INTO `empdayoff` (`empid`, `dayoffdate`, `reason`) VALUES ('4', '20170227', 'Miami');
+INSERT INTO `empdayoff` (`empid`, `dayoffdate`, `reason`) VALUES ('4', '20170228', 'Miami');
+INSERT INTO `empdayoff` (`empid`, `dayoffdate`, `reason`) VALUES ('7', '20170303', 'flu');
+INSERT INTO `empdayoff` (`empid`, `dayoffdate`, `reason`) VALUES ('5', '20170321', 'Traveling to HealthCare Conference');
+INSERT INTO `empdayoff` (`empid`, `dayoffdate`, `reason`) VALUES ('5', '20170322', 'Traveling to HealthCare Conference');
+
+
+
 
 Insert into lunchorder (orderitem,uid,restaurantid,orderdate)
 values ('veggie bowl',1,9,20170316);
@@ -734,48 +701,9 @@ values ('panera veggie sandwich',9,8,20170322);
 Insert into lunchorder (orderitem,uid,restaurantid,orderdate)
 values ('Special panera salad',10,8,20170322);
 
-INSERT INTO `ratingmaster` (`ratingdescription`) VALUES ('horrible');
-INSERT INTO `ratingmaster` (`ratingdescription`) VALUES ('bad');
-INSERT INTO `ratingmaster` (`ratingdescription`) VALUES ('average');
-INSERT INTO `ratingmaster` (`ratingdescription`) VALUES ('good');
-INSERT INTO `ratingmaster` (`ratingdescription`) VALUES ('excellent');
-
-
-
-insert restaurantreview (restaurantid,uid,review,rating)
-values (1,1,'Taco Bell has the best food ever. I love the fire sauce.',4)
-,(2,3,'Can we not do this place all the time?',3)
-,(1,8,'Taco Bell for President',5)
-,(7,7,'I do not like this place. Their subs are always soggy.',2)
-,(5,5,'I would rather starve.',1);
-
-INSERT INTO `empdayoff` (`empid`, `dayoffdate`, `reason`) VALUES ('3', '20170224', 'sick');
-INSERT INTO `empdayoff` (`empid`, `dayoffdate`, `reason`) VALUES ('4', '20170227', 'Miami');
-INSERT INTO `empdayoff` (`empid`, `dayoffdate`, `reason`) VALUES ('4', '20170228', 'Miami');
-INSERT INTO `empdayoff` (`empid`, `dayoffdate`, `reason`) VALUES ('7', '20170303', 'flu');
-INSERT INTO `empdayoff` (`empid`, `dayoffdate`, `reason`) VALUES ('5', '20170321', 'Traveling to HealthCare Conference');
-INSERT INTO `empdayoff` (`empid`, `dayoffdate`, `reason`) VALUES ('5', '20170322', 'Traveling to HealthCare Conference');
 
 delete l.* from lunchorder l
 inner join user u on l.uid = u.uid 
 inner join empdayoff e on u.empid = e.empid 
 where l.orderdate = e.dayoffdate;
-
-
-";
-
-
-if ($db->multi_query($query) === TRUE) {
-    echo "Database created successfully".PHP_EOL;
-} else {
-    echo "Error creating database: " . $db->error . PHP_EOL;
-}
-
-$db->close();
-?> 
-
-
-
-
-
 
