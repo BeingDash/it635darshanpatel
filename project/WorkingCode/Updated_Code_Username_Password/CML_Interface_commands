@@ -1,0 +1,27 @@
+./lms_create_database.php localhost root rootpassword
+
+./lmslogin.php --auth -u root -p rootpassword
+./lmslogin.php --auth -u john -p ihatepwd
+
+./lms_add_lunch_order.php deep notsodeep '2 Slices of Plain Pizza' 
+./lms_add_lunch_order.php john ihatepwd '2 Slices of Plain Pizza' 
+
+./lms_add_rest_rec.php dondon 123456 'Let's try Wendys? I am all in for Junk Food'
+
+./lms_add_review.php john ihatepwd 'Romeos has the best pizza' 'Romeo' '5'
+
+./lms_admin_add_new_restaurant.php deep notsodeep 'Five Guys' '23 james st clifton' '2011020112' 
+./lms_admin_add_new_restaurant.php root rootpassword 'Five Guys' '23 james st clifton' '2011020112' 
+
+./lms_admin_all_lunch_orders.php lee coolguy1
+./lms_admin_all_lunch_orders.php root rootpassword
+
+./lms_check_new_schedule.php root rootpassword
+
+./lms_check_past_schedule.php deep notsodeep 20170303
+
+./lms_restaurant_list.php root rootpassword 
+
+
+
+./lms_user_lunch_orders.php root rootpassword 'Taco'
