@@ -1,5 +1,7 @@
 <?php
-include("LMS_Login_Validation.php"); // Include loginserv for checking username and password
+session_start();
+
+include 'LMS_DB_Connection.php';
 ?>
  
 <!doctype html>
@@ -170,6 +172,7 @@ color: #ffffff;
 				<li><a href="LMS_Review.php">Post Review</a><li>
 				<li><a href="LMS_View_Review.php"  onclick="return confirm('Are you sure you want to leave this page? You will be able to search reviews by other paramters.')" 					class="links">View Review</a><li>
 				<li><a href="LMS_Restaurant.php">Restaurant</a><li>	
+				<li><a href="LMS_Add_User.php">Add User</a><li>	
 				<li><a href="index.html" title="Log-Out" onclick="return confirm('Are you sure you want to log out?')" class="links">Log Out</a><li>
 			</ul>
 			</div>	
@@ -187,13 +190,14 @@ color: #ffffff;
 <?php
 $reviewkeyword=$_POST['p_review_keyword'];
 
+/*
 $db_connection = new mysqli("localhost", "root", "rootpassword", "LunchManagement");
   
 	if ($db_connection->connect_error) 
 	{
       		die("Connection failed: " . $db_connection->connect_error);
 	}
-
+*/
    
 $query1="select restaurantname, review, rating, date(review_timestamp) dates From restaurantreview rr
 inner join restaurant r on rr.restaurantid = r.restaurantid
@@ -201,7 +205,7 @@ where
 rr.reviewid in (select reviewid from restaurantreview where review = '$reviewkeyword' or review like '%" . $reviewkeyword . "%')
 order by restaurantname, dates desc, rating desc ";
 	
-$result1 = $db_connection->query($query1); 
+$result1 = $conn->query($query1); 
 
 
 

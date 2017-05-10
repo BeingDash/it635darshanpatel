@@ -1,6 +1,12 @@
 <?php
-include("LMS_Login_Validation.php");
 
+session_start();
+
+include 'LMS_DB_Connection.php';
+
+include 'LMS_Login_Validation.php';
+
+$user=$_POST['p_user'];
 
 
 ?>
@@ -173,14 +179,17 @@ color: #ffffff;
 				<li><a>Post Review</a><li>
 				<li><a href="LMS_View_Review.php">View Review</a><li>
 				<li><a href="LMS_Restaurant.php">Restaurant</a><li>	
-				<li><a href="index.html" title="Log-Out" onclick="return confirm('Are you sure you want to log out?')" class="links">Log Out</a><li>
+				<li><a href="LMS_Add_User.php">Add User</a><li>	
+				<li><a href="LMS_Logout.php" title="Log-Out" onclick="return confirm('Are you sure you want to log out?')" class="links">Log Out</a><li>
 			</ul>
 			</div>	
 			
 			
 			
 			<div id="main">
-				<br>
+
+
+			<br>
 				<H2>Review & Ratings</H2>
 				<H3>Please submit your reviews and ratings for all the restaurants we order from.</H3>
 				<br>
@@ -257,10 +266,12 @@ color: #ffffff;
 				</td>
 				</tr>
 
+ 
+
 				<tr></tr><tr></tr><tr></tr><tr></tr>
-				<td align="left"><input type="hidden" id="p_user" name="p_user" value="root"/></td>	
+				<td align="left"> <input type="hidden" id="p_user" name="p_user" value= "root"/></td>	
 				<tr></tr><tr></tr><tr></tr><tr></tr>
-				<td align="left"><input type="hidden" id="p_password" name="p_password" value="rootpassword"/></td>	
+				
 				<tr></tr><tr></tr><tr></tr><tr></tr>
 				<tr>
 				<td><input type="submit" name="p_submit_review" value="Submit Review and Ratings"/></td>
@@ -268,8 +279,7 @@ color: #ffffff;
 
 				</table>
 				</form>
-				
-				
+						
 			</div>
 			
 			

@@ -3,6 +3,10 @@
 session_start();
 
 include 'LMS_DB_Connection.php';
+
+include 'LMS_Login_Validation.php';
+
+
 ?>
  
 <!doctype html>
@@ -10,7 +14,7 @@ include 'LMS_DB_Connection.php';
 <html>
 
 <head>
-	<title>LMS_Review_Restaurant_By_Review</title>
+	<title>LMS_Review</title>
 		
 	
 <style>
@@ -57,7 +61,7 @@ li { margin-top: .5em;}
 
 #page {
 	width: 1000px;
-	min-height: 700px;
+	min-height: 800px;
 	margin: 0 auto;
 	padding: 10px;
 	border: 2.5px solid black;
@@ -171,87 +175,59 @@ color: #ffffff;
 			<ul>
 				<li><a href="index.html" title="Log-Out" onclick="return confirm('Are you sure you want to leave this page? You will have to log in again')" class="links">Home</a><li>
 				<li><a href="LMS_Review.php">Post Review</a><li>
-				<li><a href="LMS_View_Review.php"  onclick="return confirm('Are you sure you want to leave this page? You will be able to search reviews by other paramters.')" 					class="links">View Review</a><li>
+				<li><a href="LMS_View_Review.php">View Review</a><li>
 				<li><a href="LMS_Restaurant.php">Restaurant</a><li>	
-				<li><a href="LMS_Add_User.php">Add User</a><li>				
-				<li><a href="index.html" title="Log-Out" onclick="return confirm('Are you sure you want to log out?')" class="links">Log Out</a><li>
+				<li><a>Add User</a><li>	
+				<li><a href="LMS_Logout.php" title="Log-Out" onclick="return confirm('Are you sure you want to log out?')" class="links">Log Out</a><li>
 			</ul>
 			</div>	
 			
 			
 			
 			<div id="main">
-			<br>
-			<H2>Reviews based on Ratings Range</H2>
-			<br>
-			<table cellspacing="1" border="1">
-			<tr><th>Restaurant</th><th>AverageRating</th><th>Reviews</th></tr>
+
+				
+				<br>
+				<H2>Please add user.</H2>
+				<H3>Password would be hashed when entered in DB.</H3>
+				<br>
+				<form method="post" action="LMS_Add_User_DB.php">
+				<table cellspacing="2" border="0">
+				<tr>
+				<td>Username:</td>
+				<td align="left"><input type="text" id="p_adduser" name="p_adduser"/></td>
+				</tr>
+				<tr>
+				<td>Password:</td>
+				<td align="left"><input type="password" id="p_addpassword" name="p_addpassword"/></td>
+				</tr>
+				<tr>
+				<td>Email:</td>
+				<td align="left"><input type="text" id="p_addemail" name="p_addemail"/></td>
+				</tr>
+				<tr>
+				<td>Role:</td>
+				<td align="left">
+				<select name="p_addrole">
+				<option value="3" selected>Guest</option>
+				<option value="2"	  >User</option>
+				<option value="1"         >Admin</option>
+				</select>				
+				</tr>
+				<tr></tr>
+				<tr></tr>
+				<tr></tr>
+				<tr>
+				<td><input type="submit" name="p_submit" value="Add User"/></td>
+				</tr>
+				</table>
+				</form>
 
 
-<?php
-$aggrating=$_POST['p_aggregate_rating'];
-
-/*
-$conn = new mysqli("localhost", "root", "rootpassword", "LunchManagement");
-  
-	if ($conn->connect_error) 
-	{
-      		die("Connection failed: " . $conn->connect_error);
-	}
-*/
-   
-$query1="select * from 
-(select restaurantname, truncate(avg(rating),2) average_rating, group_concat(concat(empname,': ',review, char(13))) reviewer_and_review
-					from restaurantreview rr
-					inner join restaurant r on rr.restaurantid = r.restaurantid
-					inner join user u on rr.uid = u.uid
-					inner join employees e on u.empid = e.empid
-					group by restaurantname)aa 
-where average_rating > $aggrating 
-order by average_Rating desc ";
-
-
-
-	
-$result1 = $conn->query($query1); 
-
-
-
-
-				        if ($result1->num_rows > 0) {
-				        echo "\n";
-				        // output data of each row
-				        while($row = $result1->fetch_assoc()) {
-
-?>
-					<tr>
-					<td>					
-				  <?php echo $row["restaurantname"];?>
-					</td>
-					<td>
-				  <?php echo $row["average_rating"];?>
-					</td>
-					<td>
-				  <?php echo $row["reviewer_and_review"];?>
-<?php				        echo "\n";
-				        }
-				        echo "\n";
-				        }
-       
-
-
-$db->close();
-echo "\n";
-?>
-					</td>
-					</tr>
-					</table>
-					</div>
-
-
-</div>
+				
+			</div>
+			
+			
 </body>
+	
 </html>
-
-
-

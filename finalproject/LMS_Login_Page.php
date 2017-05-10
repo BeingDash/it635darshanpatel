@@ -1,5 +1,9 @@
 <?php
-include("LMS_Login_Validation.php"); // Include loginserv for checking username and password
+
+//session_start();
+
+include 'LMS_Login_Validation.php';
+
 ?>
  
 <!doctype html>
@@ -190,7 +194,8 @@ color: #ffffff;
 				</tr>
 				</table>
 				</form>
-				<br>
+
+			<br>
 				<br>
 
 			</div>

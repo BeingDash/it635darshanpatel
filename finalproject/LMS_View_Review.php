@@ -1,5 +1,9 @@
 <?php
+
+session_start();
+
 include("LMS_Login_Validation.php"); // Include loginserv for checking username and password
+
 ?>
  
 <!doctype html>
@@ -169,7 +173,8 @@ color: #ffffff;
 				<li><a href="index.html" title="Log-Out" onclick="return confirm('Are you sure you want to leave this page? You will have to log in again')" class="links">Home</a><li>
 				<li><a href="LMS_Review.php">Post Review</a><li>
 				<li><a>View Review</a><li>
-				<li><a href="LMS_Restaurant.php">Restaurant</a><li>	
+				<li><a href="LMS_Restaurant.php">Restaurant</a><li>
+				<li><a href="LMS_Add_User.php">Add User</a><li>		
 				<li><a href="index.html" title="Log-Out" onclick="return confirm('Are you sure you want to log out?')" class="links">Log Out</a><li>
 			</ul>
 			</div>	

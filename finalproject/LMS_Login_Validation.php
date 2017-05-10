@@ -1,24 +1,45 @@
 <?php
+
+session_start();
+
+include 'LMS_DB_Connection.php';
+
 $error=''; //Variable to Store error message;
 if(isset($_POST['p_login'])){
- if(empty($_POST['p_user']) || empty($_POST['p_password'])){
- $error = "Username or Password is Invalid";
- }
- else
- {
- //Define $user and $pass
- $user=$_POST['p_user'];
- $pass=$_POST['p_password'];
- //Establishing Connection with server by passing server_name, user_id and pass as a patameter
- $conn = mysqli_connect("localhost", "root", "rootpassword");
- //Selecting Database
- $db = mysqli_select_db($conn, "LunchManagement");
- //sql query to fetch information of registerd user and finds user match.
- $query = mysqli_query($conn, "SELECT * FROM user WHERE password='$pass' AND uname='$user'");
- 
- $rows = mysqli_num_rows($query);
+if(empty($_POST['p_user']) || empty($_POST['p_password'])){
+$error = "Username or Password is Invalid";
+}
+else
+{
+
+
+$user=$_POST['p_user'];
+$pass=$_POST['p_password'];
+$hashed = hash('sha256',$pass);
+
+
+//this is the query i used to hash password in databases
+//update user set password = sha2(password,256) where uid in (1,2)
+
+$query = mysqli_query($conn, "SELECT * FROM user WHERE password='$hashed' AND uname='$user'");
+$result = $conn->query($query); 
+
+$rows = mysqli_num_rows($query);
+
+//added this section to test session
+
+	if (isset($_SESSION['uname']))	{
+		echo $_SESSION['uname'];
+	} else {
+		echo "";
+	}
+
+//session section ends here 	
+
+
  if($rows == 1){
  header("Location: LMS_Review.php"); // Redirecting to other page
+ $_SESSION['uname'] = $rows["uname"];
  }
  else
  {
@@ -27,5 +48,9 @@ if(isset($_POST['p_login'])){
  mysqli_close($conn); // Closing connection
  }
 }
- 
+
+
+
 ?>
+
+
